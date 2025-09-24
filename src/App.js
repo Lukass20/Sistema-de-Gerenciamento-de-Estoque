@@ -1,42 +1,55 @@
 import React, { useState } from 'react';
 import Login from './Login';
 import Menu from './Menu';
-import Clientes from './Clientes';
-import Estoque from './Estoque';
 import Cadastro from './Cadastro';
+import Estoque from './Estoque'; 
 import AdicionarProduto from './AdicionarProduto'; 
+import GerenciarUsuarios from './GerenciarUsuarios'; 
+import RelatorioEstoque from './RelatorioEstoque'; 
+import Clientes from './Clientes'; 
 
-// Componente principal que gerencia a navegação entre as telas
-const App = () => {
-  const [currentScreen, setCurrentScreen] = useState('Login');
+function App() {
+  const [currentScreen, setCurrentScreen] = useState('login');
+  const [user, setUser] = useState(null);
 
-  const navigate = (screen) => {
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    setCurrentScreen('menu');
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setCurrentScreen('login');
+  };
+
+  const navigateTo = (screen) => {
     setCurrentScreen(screen);
   };
 
   const renderScreen = () => {
     switch (currentScreen) {
-      case 'Menu':
-        return <Menu navigate={navigate} />;
-      case 'Clientes':
-        return <Clientes navigate={navigate} />;
-      case 'Estoque':
-        return <Estoque navigate={navigate} />;
-      case 'Cadastro':
-        return <Cadastro navigate={navigate} />;
-      case 'AdicionarProduto': 
-        return <AdicionarProduto navigate={navigate} />;
-      case 'Login':
+      case 'login':
+        return <Login onLoginSuccess={handleLoginSuccess} navigateTo={navigateTo} />;
+      case 'menu':
+        return <Menu onLogout={handleLogout} navigateTo={navigateTo} />;
+      case 'cadastro':
+        return <Cadastro navigateTo={navigateTo} />;
+      case 'estoque':
+        return <Estoque goBack={() => navigateTo('menu')} />;
+      case 'adicionar-produto':
+        return <AdicionarProduto goBack={() => navigateTo('menu')} />;
+      case 'gerenciar-usuarios':
+        return <GerenciarUsuarios goBack={() => navigateTo('menu')} />;
+      case 'relatorio-estoque':
+        return <RelatorioEstoque goBack={() => navigateTo('menu')} />;
+      case 'clientes':
+        return <Clientes goBack={() => navigateTo('menu')} />;
       default:
-        return <Login navigate={navigate} />;
+        return <Login onLoginSuccess={handleLoginSuccess} navigateTo={navigateTo} />;
     }
   };
 
-  return (
-    <div>
-      {renderScreen()}
-    </div>
-  );
-};
+  return <div className="App">{renderScreen()}</div>;
+}
 
 export default App;

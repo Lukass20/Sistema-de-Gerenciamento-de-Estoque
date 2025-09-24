@@ -1,7 +1,7 @@
 import React from 'react';
 import backgroundImage from './assets/garritano.jpg';
 
-const Clientes = ({ goBack }) => {
+const RelatorioEstoque = ({ goBack }) => {
   const styles = {
     container: {
       display: 'flex',
@@ -47,12 +47,12 @@ const Clientes = ({ goBack }) => {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h1 style={styles.title}>Gerenciar Clientes</h1>
-        <p>Aqui você poderá cadastrar e gerenciar as informações dos clientes.</p>
+        <h1 style={styles.title}>Relatório de Estoque</h1>
+        <p>Aqui você poderá gerar relatórios sobre o estoque e vendas.</p>
         <button style={styles.button} onClick={goBack}>Voltar ao Menu</button>
       </div>
     </div>
   );
 };
 
-export default Clientes;
+export default RelatorioEstoque;

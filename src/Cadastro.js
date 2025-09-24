@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import backgroundImage from './assets/garritano.jpg';
 
-const Cadastro = ({ navigate }) => {
+const Cadastro = ({ navigateTo }) => {
   const [nome, setNome] = useState('');
   const [usuario, setUsuario] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [cargo, setCargo] = useState('');
-  const [setor, setSetor] = useState('');
+  const [cargo_id, setCargoId] = useState('');
+  const [setor_id, setSetorId] = useState('');
+
+  const [cargos, setCargos] = useState([]);
+  const [setores, setSetores] = useState([]);
+
+  useEffect(() => {
+    const mockCargos = [
+      { id: 1, nome: 'Administrador' },
+      { id: 2, nome: 'Gerente' },
+      { id: 3, nome: 'Vendedor' }
+    ];
+    const mockSetores = [
+      { id: 1, nome: 'Administrativo' },
+      { id: 2, nome: 'Vendas' },
+      { id: 3, nome: 'Depósito' }
+    ];
+    setCargos(mockCargos);
+    setSetores(mockSetores);
+  }, []);
 
   const handleSave = async () => {
-    if (!nome || !email || !senha || !confirmarSenha || !cargo || !setor) {
+    if (!nome || !usuario || !email || !senha || !confirmarSenha || !cargo_id || !setor_id) {
       alert('Por favor, preencha todos os campos.');
       return;
     }
@@ -30,13 +47,12 @@ const Cadastro = ({ navigate }) => {
         },
         body: JSON.stringify({
           nome,
-          usuario, 
+          usuario,
           email,
           senha,
-          telefone,
-          role: 'funcionario',
-          cargo,
-          setor,
+          cargo_id,
+          setor_id,
+          ativo: 1,
         }),
       });
 
@@ -44,9 +60,9 @@ const Cadastro = ({ navigate }) => {
 
       if (response.ok) {
         alert('Usuário cadastrado com sucesso!');
-        navigate('Login');
+        navigateTo('login');
       } else {
-        alert(data.error || 'Erro ao cadastrar usuário.');
+        alert(data.message || 'Erro ao cadastrar usuário.');
       }
     } catch (err) {
       alert('Não foi possível conectar ao servidor. Verifique se o servidor está rodando.');
@@ -59,8 +75,13 @@ const Cadastro = ({ navigate }) => {
         <h1 style={styles.title}>Cadastro de Usuário</h1>
         
         <div style={styles.inputGroup}>
-          <label htmlFor="nome" style={styles.label}>Nome:</label>
+          <label htmlFor="nome" style={styles.label}>Nome Completo:</label>
           <input id="nome" type="text" style={styles.input} placeholder="Nome completo" value={nome} onChange={(e) => setNome(e.target.value)} />
+        </div>
+
+        <div style={styles.inputGroup}>
+          <label htmlFor="usuario" style={styles.label}>Usuário:</label>
+          <input id="usuario" type="text" style={styles.input} placeholder="Nome de usuário" value={usuario} onChange={(e) => setUsuario(e.target.value)} />
         </div>
 
         <div style={styles.inputGroup}>
@@ -80,16 +101,26 @@ const Cadastro = ({ navigate }) => {
         
         <div style={styles.inputGroup}>
           <label htmlFor="cargo" style={styles.label}>Cargo:</label>
-          <input id="cargo" type="text" style={styles.input} placeholder="Ex: Gerente" value={cargo} onChange={(e) => setCargo(e.target.value)} />
+          <select id="cargo" style={styles.input} value={cargo_id} onChange={(e) => setCargoId(e.target.value)}>
+            <option value="">Selecione o Cargo</option>
+            {cargos.map(cargo => (
+              <option key={cargo.id} value={cargo.id}>{cargo.nome}</option>
+            ))}
+          </select>
         </div>
 
         <div style={styles.inputGroup}>
           <label htmlFor="setor" style={styles.label}>Setor:</label>
-          <input id="setor" type="text" style={styles.input} placeholder="Ex: Vendas" value={setor} onChange={(e) => setSetor(e.target.value)} />
+          <select id="setor" style={styles.input} value={setor_id} onChange={(e) => setSetorId(e.target.value)}>
+            <option value="">Selecione o Setor</option>
+            {setores.map(setor => (
+              <option key={setor.id} value={setor.id}>{setor.nome}</option>
+            ))}
+          </select>
         </div>
 
         <button style={styles.button} onClick={handleSave}>Cadastrar</button>
-        <button style={{ ...styles.button, ...styles.backButton }} onClick={() => navigate('Login')}>Voltar ao Login</button>
+        <button style={{ ...styles.button, ...styles.backButton }} onClick={() => navigateTo('login')}>Voltar ao Login</button>
       </div>
     </div>
   );

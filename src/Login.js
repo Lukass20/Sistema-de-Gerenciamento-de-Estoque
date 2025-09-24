@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import backgroundImage from './assets/garritano.jpg';
 import logoImage from './assets/logo.png';
 
-const Login = ({ navigate }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+const Login = ({ onLoginSuccess, navigateTo }) => {
+  const [usuario, setUsuario] = useState('');
+  const [senha, setSenha] = useState('');
 
   const handleLogin = async () => {
     try {
@@ -14,69 +13,43 @@ const Login = ({ navigate }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, senha: password }),
+        body: JSON.stringify({ usuario, senha }),
       });
 
       const data = await response.json();
 
-      if (response.ok && data.success) {
-        localStorage.setItem('userRole', data.role);
-        setError('');
-        navigate('Menu');
+      if (response.ok) {
+        alert('Login realizado com sucesso.');
+        onLoginSuccess(data.user);
       } else {
-        setError(data.message || 'Erro no login.');
+        alert(data.message || 'Erro ao realizar login.');
       }
     } catch (err) {
-      setError('Não foi possível conectar ao servidor. Verifique se o servidor está rodando.');
+      alert('Não foi possível conectar ao servidor. Verifique se o servidor está rodando.');
     }
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <img src={logoImage} alt="Logo" style={styles.logo} />
-        <h1 style={styles.title}>Supermercado Garritano</h1>
-        <p style={styles.subtitle}>Sistema de Gestão</p>
-
-        <div style={styles.inputGroup}>
-          <label htmlFor="email" style={styles.label}>E-mail:</label>
-          <input 
-            id="email" 
-            type="email" 
-            style={styles.input} 
-            placeholder="Digite seu e-mail" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <div style={styles.inputGroup}>
-          <label htmlFor="password" style={styles.label}>Senha:</label>
-          <input 
-            id="password" 
-            type="password" 
-            style={styles.input} 
-            placeholder="Digite sua senha" 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
-        {error && <p style={styles.errorText}>{error}</p>}
-
-        <button
-          style={styles.button}
-          onClick={handleLogin}
-        >
-          Entrar
-        </button>
-
-        <button
-          style={{...styles.button, ...styles.registerButton}}
-          onClick={() => navigate('Cadastro')}
-        >
-          Cadastrar
-        </button>
+        <img src={logoImage} alt="Garritano Logo" style={styles.logo} />
+        <h1 style={styles.title}>Sistema Garritano</h1>
+        <input
+          type="text"
+          placeholder="Usuário"
+          value={usuario}
+          onChange={(e) => setUsuario(e.target.value)}
+          style={styles.input}
+        />
+        <input
+          type="password"
+          placeholder="Senha"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          style={styles.input}
+        />
+        <button style={styles.button} onClick={handleLogin}>Entrar</button>
+        <button style={styles.registerButton} onClick={() => navigateTo('cadastro')}>Cadastrar</button>
       </div>
     </div>
   );
@@ -87,7 +60,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
+    minHeight: '100vh',
     fontFamily: 'Arial, sans-serif',
     backgroundImage: `url(${backgroundImage})`,
     backgroundSize: 'cover',
@@ -103,38 +76,23 @@ const styles = {
     width: '100%',
     maxWidth: '400px',
     textAlign: 'center',
+    marginTop: '23vh',
   },
   logo: {
-    width: '100px',
-    marginBottom: '20px',
+    width: '300px',
+    marginBottom: '50px',
   },
   title: {
-    fontSize: 28,
-    marginBottom: '5px',
+    fontSize: '2em',
+    marginBottom: '20px',
     color: '#333',
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: '30px',
-  },
-  inputGroup: {
-    marginBottom: '20px',
-    textAlign: 'left',
-  },
-  label: {
-    display: 'block',
-    marginBottom: '5px',
-    color: '#555',
-    fontWeight: 'bold',
-  },
   input: {
-    width: '100%',
+    width: 'calc(100% - 20px)',
     padding: '10px',
-    border: '1px solid #ccc',
+    margin: '10px 0',
     borderRadius: '5px',
-    boxSizing: 'border-box',
-    fontSize: '16px',
+    border: '1px solid #ccc',
   },
   button: {
     width: '100%',
@@ -147,15 +105,20 @@ const styles = {
     color: 'white',
     fontWeight: 'bold',
     marginTop: '10px',
-  },
-  errorText: {
-    color: '#dc3545',
-    marginBottom: '10px',
+    transition: 'background-color 0.3s ease',
   },
   registerButton: {
-    backgroundColor: '#6c757d', // Cinza para o botão de cadastro
+    width: '100%',
+    backgroundColor: '#6c757d',
     marginTop: '10px',
-  },
+    padding: '12px', 
+    fontSize: '16px',
+    cursor: 'pointer',
+    borderRadius: '5px',
+    border: 'none',
+    color: 'white',
+    fontWeight: 'bold',
+  }
 };
 
 export default Login;

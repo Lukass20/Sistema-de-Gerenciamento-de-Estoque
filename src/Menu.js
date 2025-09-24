@@ -1,74 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import backgroundImage from './assets/garritano.jpg';
 
-const Menu = ({ navigate }) => {
-  const [userRole, setUserRole] = useState(null);
-
-  useEffect(() => {
-    const role = localStorage.getItem('userRole');
-    setUserRole(role);
-  }, []);
-
-  const isAdmin = userRole === 'administrador';
-  const isGerente = userRole === 'gerente';
-  const isEstoquista = userRole === 'estoquista';
-  const isFuncionario = userRole === 'funcionario';
-
-  const showGerenciarClientes = isAdmin;
-  const showGerenciarProdutos = isGerente || isAdmin;
-  const showRealizarVenda = isGerente || isAdmin || isFuncionario;
-  const showGerenciarEstoque = isEstoquista || isGerente || isAdmin;
-
+const Menu = ({ navigateTo, onLogout }) => {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
         <h1 style={styles.title}>Menu Principal</h1>
-
-        {showGerenciarClientes && (
-          <button
-            style={styles.button}
-            onClick={() => navigate('Clientes')}
-          >
-            Gerenciar Clientes
-          </button>
-        )}
-        
-        {showGerenciarProdutos && (
-          <button
-            style={styles.button}
-            onClick={() => alert('Navegação para Gerenciar Produtos pendente!')}
-          >
-            Gerenciar Produtos
-          </button>
-        )}
-        
-        {showRealizarVenda && (
-          <button
-            style={styles.button}
-            onClick={() => alert('Navegação para Vendas pendente!')}
-          >
-            Realizar Venda
-          </button>
-        )}
-        
-        {showGerenciarEstoque && (
-          <button
-            style={styles.button}
-            onClick={() => navigate('Estoque')}
-          >
-            Gerenciar Estoque
-          </button>
-        )}
-
-        <button
-          style={{ ...styles.button, ...styles.logoutButton }}
-          onClick={() => {
-            localStorage.removeItem('userRole');
-            navigate('Login');
-          }}
-        >
-          Sair
-        </button>
+        <div style={styles.buttonContainer}>
+          <button style={styles.button} onClick={() => navigateTo('estoque')}>Gerenciar Estoque</button>
+          <button style={styles.button} onClick={() => navigateTo('adicionar-produto')}>Adicionar/Excluir Produtos</button>
+          <button style={styles.button} onClick={() => navigateTo('gerenciar-usuarios')}>Gerenciar Usuários</button>
+          <button style={styles.button} onClick={() => navigateTo('relatorio-estoque')}>Relatório de Estoque</button>
+          <button style={styles.button} onClick={() => navigateTo('clientes')}>Gerenciar Clientes</button>
+          <button style={styles.logoutButton} onClick={onLogout}>Sair</button>
+        </div>
       </div>
     </div>
   );
@@ -79,7 +24,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
+    minHeight: '100vh',
     fontFamily: 'Arial, sans-serif',
     backgroundImage: `url(${backgroundImage})`,
     backgroundSize: 'cover',
@@ -93,13 +38,19 @@ const styles = {
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
     backgroundColor: 'white',
     width: '100%',
-    maxWidth: '400px',
+    maxWidth: '500px',
     textAlign: 'center',
+    marginTop: '19vh',
   },
   title: {
-    fontSize: 28,
-    marginBottom: '30px',
+    fontSize: '2em',
     color: '#333',
+    marginBottom: '20px',
+  },
+  buttonContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '15px',
   },
   button: {
     width: '100%',
@@ -111,12 +62,21 @@ const styles = {
     backgroundColor: '#007bff',
     color: 'white',
     fontWeight: 'bold',
-    marginBottom: '15px',
+    transition: 'background-color 0.3s ease',
   },
   logoutButton: {
+    width: '100%',
+    padding: '12px',
+    fontSize: '16px',
+    cursor: 'pointer',
+    borderRadius: '5px',
+    border: 'none',
     backgroundColor: '#dc3545',
+    color: 'white',
+    fontWeight: 'bold',
     marginTop: '20px',
-  }
+    transition: 'background-color 0.3s ease',
+  },
 };
 
 export default Menu;
